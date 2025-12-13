@@ -1,1 +1,20 @@
-<p>register works!</p>
+<div class="auth-container">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        name: <input type="text" formControlName="name"/>
+        <br>
+         email: <input type="email" formControlName="email"/>
+        <br>
+         password: <input type="password" formControlName="password"/>
+        <br>
+        <button type="submit" [disabled]="loading||registerForm.invalid">
+            {{loading ? 'please wait...' : 'register'}}
+        </button>
+        <p class="success" *ngIf="success">{{success}}</p>
+        <p class="error" *ngIf="error">{{error}}</p>
+
+        <p class="switch">
+            Already have an account?
+            <a routerLink="/login">Login here</a>
+        </p>
+    </form>
+</div>
