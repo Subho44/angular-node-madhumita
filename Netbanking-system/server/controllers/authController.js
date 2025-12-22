@@ -11,6 +11,7 @@ function genotp() {
 //send otp
 exports.sendOtp = async(req,res)=>{
     const {email} = req.body;
+    
     try {
         const otp =genotp();
         const otpHash = await bcrypt.hash(otp,10);
@@ -28,13 +29,45 @@ exports.sendOtp = async(req,res)=>{
             subject:"your otp code",
             text:`Your otpis ${otp}. it will expire in 5 minute`
         });
-
+         
         res.status(201).json({message:"otp sent sucessfully"});
     } catch(err) {
          res.status(400).json({message:"user already exists"});
     }
 }
+//verify otp
+exports.verifyOtp = async(req,res)=>{
+    const {email,otp,name} = req.body;
+    try {
+     const otpdoc = await Otp.findOne({email})   ;
+     if(!otpdoc) return res.status(400).json({message:"otp not found"});
 
+     if(otpdoc.expiresAt < new Date()) {
+        await Otp.deleteOne({email});
+         return res.status(400).json({message:"otp expired"});
+     }
+     if(otpdoc.attemptsLeft < 0) {
+        await Otp.deleteOne({email});
+         return res.status(400).json({message:"too many attempts"});
+     }
+     const ok = await bcrypt.compare(otp,otpdoc.otpHash);
+     if(!ok) return res.status(400).json({message:"invalid otp"});
+     await Otp.deleteOne({email});
+
+     let user = await User.findOne({email});
+     if(!user) return res.status(400).json({message:"invalid user"});
+
+      const token = jwt.sign({userId:user._id, email:user.email,name:user.name},
+            process.env.JWT_SECRET,{expiresIn:'30d'}
+        );
+        res.json({token});
+    
+
+       
+    } catch(err) {
+         res.status(400).json({message:"otp verify failed"});
+    }
+}
 
 
 //registration
