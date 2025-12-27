@@ -1,0 +1,9 @@
+<p>verify-otp works!</p>
+
+<input type="email" placeholder="enter email" [(ngModel)]="email"/>
+<input type="text" placeholder="enter OTP" [(ngModel)]="otp"/>
+<input type="text" placeholder="enter Name" [(ngModel)]="name"/>
+<button (click)="verify()" [disabled]="loading">
+  {{loading ? 'Veryfing...' :'Veryfi otp'}}
+</button>
+<p class="x" *ngIf="msg">{{msg}}</p>

@@ -24,6 +24,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+     localStorage.removeItem('otp_email');
   }
 
   getToken():string |null {
@@ -42,6 +43,20 @@ export class AuthService {
       }
     });
   }
+
+  async sendOtp(email:string) {
+    const res = await axios.post(`${this.API_URL}/otp/send`,{email});
+    return res.data;
+  }
+
+  async verifyOtp(email:string,otp:string,name?:string) {
+    const res = await axios.post(`${this.API_URL}/otp/verify`,{email,otp,name});
+    if(res.data?.token) {
+      localStorage.setItem('token',res.data.token);
+    }
+    return res.data;
+  }
+  
 
 
 }

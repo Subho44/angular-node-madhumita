@@ -12,6 +12,7 @@ export class AuthGuard implements CanActivate {
     if (this.auth.isLoggedin()) {
       return true;
     }
+    this.router.navigate(['/send-otp']);
     this.router.navigate(['/login']);
     return false;
   }

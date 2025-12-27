@@ -1,0 +1,6 @@
+<p>send-otp works!</p>
+<input type="email" placeholder="enter email" [(ngModel)]="email"/>
+<button (click)="send()" [disabled]="loading">
+  {{loading ? 'Sending...' :'send otp'}}
+</button>
+<p class="x" *ngIf="msg">{{msg}}</p>
